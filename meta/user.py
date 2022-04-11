@@ -1,8 +1,5 @@
-from sys import setdlopenflags
-
-
 class User:
-    def __init__(self, id, username, data):
+    def __init__(self, id=0, username="bob", data=""):
         self.id = id
         self.username = username
         self.data = data
@@ -12,3 +9,8 @@ class User:
 
         self.x = 0
         self.y = 0
+
+        self.speed = 10
+
+        self.visible = True
+    

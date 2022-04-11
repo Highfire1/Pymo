@@ -1,10 +1,13 @@
 import pygame
 import sys
+import os
+import asyncio
 from core.controller import Controller
 from core.sprites.level import Level
 from meta.user import User
+from core.server.out import loadServer
 
-class Game:
+class Server:
     def __init__(self):
         pygame.init()
 
@@ -15,27 +18,42 @@ class Game:
 
         # Creating the screen and the clock
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
-        self.screen.set_alpha(0)  # Make alpha bits transparent
+        self.screen.set_alpha(0)  # Make alpha bits transparent (?)
         self.clock = pygame.time.Clock()
 
-        self.players = pygame.sprite.Group()
+        
 
 
         # TODO: get user from server
         user = User()
+        user.visible = False
+
         level = Level()
         self.controller = Controller(user=user, level=level)
 
+        self.players = pygame.sprite.Group()
+        self.users = self.load_users()
+
 
         # TODO: get game world data from server
-
         
-        # begin the actual game
-        self.main_loop()
 
     
+    def load_users(self):
+        users = []
+
+        for fi in os.listdir("data\\users"):
+            with open(f"{os.getcwd()}\\data\\users\\{fi}", "r") as user:
+                data = user.read()
+                print(data)
+                users.append(data)
+        
+        return users
     
-    def main_loop(self):
+    async def mainLoop(self):
+
+        asyncio.create_task(loadServer())
+
         while True:
             self.players.update()
 
@@ -59,5 +77,11 @@ class Game:
             pygame.display.flip()
             self.clock.tick(60)
             self.screen.fill((0,0,0))
+
+            # recieve
+
+            # push updates to players
+
+            
 
             

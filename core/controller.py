@@ -1,115 +1,88 @@
 import pygame
 import os
 from math import copysign
+from meta.user import User
+from core.sprites.player import Player
 
-class Player(pygame.sprite.Sprite):
-    def __init__(self, x = 200, y = 200, width = 30, height = 30, color = None):
-        super().__init__() 
+'''
+The controller
+this place controls the player sprite and the map
+'''
 
-        # pygame things
-        # image is what the sprite looks like   
-        # rect is where image is drawn
-        image_location = os.path.join("assets", "player.png")
-        self.image = pygame.image.load(image_location)
-        self.image = pygame.transform.scale(self.image, (50, 50))
+class Controller():
+    def __init__(self, user, level):
 
-        self.rect = self.image.get_rect()
-        self.rect.center = (1000 / 2, 800 / 2)
+        self.user = user
+        self.sprite = Player(user)  
+        self.level = level
 
-        self.speed = 5
-        self.verticalVelocity = 0
-        self.platform = None
-
-        self.setText("placeholder")
-        self.textRect = self.image.get_rect()
-        self.textRect.x = 0
-        self.textRect.y = 0
-
-        self.contactCheckRect = self.image.get_rect()
-
-        self.oldcollided = []
-        self.collision = False
+        if self.user.x == 0 and self.user.y == 0:
+            x, y = self.level.spawn
+            self.user.x = x
+            self.user.y = y
 
 
-    def setText(self, text):
-        font = pygame.font.Font('freesansbold.ttf', 32)
-        self.text = font.render(text, True, (255, 255, 255))
+    def update(self):
+        
+        #TODO: fix diagonal movement being op
 
-
-    def update(self, all_sprites):
+        if self.user == None:
+            return
         
         keys_pressed = pygame.key.get_pressed()
 
 
+        modifierx = 0
+        modifiery = 0  
+
         # X AXIS
-        modifier = 0
-        if keys_pressed[pygame.K_LEFT]:
-            modifier -= self.speed
-        if keys_pressed[pygame.K_RIGHT]:
-            modifier += self.speed
+        if keys_pressed[pygame.K_LEFT] or keys_pressed[pygame.K_a]:
+            modifierx -= self.user.speed
+        if keys_pressed[pygame.K_RIGHT] or keys_pressed[pygame.K_d]:
+            modifierx += self.user.speed
         
-        self.rect.x += modifier
+        # Y AXIS  
+        if keys_pressed[pygame.K_UP] or keys_pressed[pygame.K_w]:
+            modifiery -= self.user.speed
+        elif keys_pressed[pygame.K_DOWN] or keys_pressed[pygame.K_s]:
+            modifiery += self.user.speed
 
-        collided = pygame.sprite.spritecollide(self, all_sprites, dokill=False)
-        if modifier == 0:
-            for sprite in collided:
-                modifier += -sprite.speed 
-            
-        while len(collided) != 0:
-            self.rect.x -= int(copysign(1, modifier))
-            collided = pygame.sprite.spritecollide(self, all_sprites, dokill=False)
+        self.user.x += modifierx
+        self.user.y += modifiery
 
-        gravity = -9.81
-
-        # Y AXIS
-        modifier = 0    
-
-        # how to check if touching a platform:
-        # a) platform tells player
-        # b) player does own collision checking
-        # c) ???
-
-        if keys_pressed[pygame.K_UP] and self.collision:
-            self.verticalVelocity = -20
-        elif self.collision:
-            self.verticalVelocity = 0
-
-        self.collision = False
-        #if keys_pressed[pygame.K_DOWN]:
-        #    modifier += self.speed
-
-        self.verticalVelocity += 0.5
-        print(self.verticalVelocity)
-
-        if self.rect.y > 800:
-            self.verticalVelocity = -30
+        # creates a dynamic camera
+        diffx = self.user.x - self.user.camerax
+        diffy = self.user.y - self.user.cameray
 
 
+        self.user.camerax = self.user.camerax + diffx/10
+        self.user.cameray = self.user.cameray + diffy/10
 
-        modifier = self.verticalVelocity
-        self.rect.y += modifier
-
-        
-
-        collided = pygame.sprite.spritecollide(self, all_sprites, dokill=False)
-        while len(collided) != 0:
-            self.rect.y -= int(copysign(1, modifier))
-            collided = pygame.sprite.spritecollide(self, all_sprites, dokill=False)
         
         # print coordinates
-        self.setText(f"({self.rect.x}, {self.rect.y})")
-
 
         
     def draw(self, screen):
+        camx = int(self.user.camerax)
+        camy = int(self.user.cameray)
+
+        x = 0 - camx
+        y = 0 - camy
+        
+        # draw background
+        self.level.draw(screen, x, y)
+
         # draw player
-        screen.blit(self.image, self.rect)
+        w, h = pygame.display.get_surface().get_size()
 
-        # draw x/y of player sprite
-        pygame.draw.rect(screen, (255,0,0), (self.rect.x, self.rect.y, 5, 5))
+        x = self.user.x - camx + w/2
+        y = self.user.y - camy + h/2
+    
+        
+        self.sprite.draw(screen, x, y)
 
-        # print player coordinates
-        screen.blit(self.text, self.textRect)
+        #print(f"player is at {self.user.x}, {self.user.y}. The camera is at {camx}, {camy}.")
+        
 
 
         
