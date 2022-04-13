@@ -1,8 +1,11 @@
 import pygame
 import os
+import asyncio
+import json
 from math import copysign
 from meta.user import User
 from core.sprites.player import Player
+from core.client import sendToServer
 
 '''
 The controller
@@ -10,7 +13,7 @@ this place controls the player sprite and the map
 '''
 
 class Controller():
-    def __init__(self, user, level):
+    def __init__(self, user: User, level):
 
         self.user = user
         self.sprite = Player(user)  
@@ -20,9 +23,13 @@ class Controller():
             x, y = self.level.spawn
             self.user.x = x
             self.user.y = y
+        
+        self.server = False
+
+        self.connections = 0
 
 
-    def update(self):
+    async def update(self):
         
         #TODO: fix diagonal movement being op
 
@@ -60,6 +67,17 @@ class Controller():
 
         
         # print coordinates
+
+        if not self.server and self.user.lastJSON != self.user.toJSON():
+            self.user.lastJSON = self.user.toJSON()
+            await sendToServer(self.user.toJSON())
+
+    def usersFromJSON(self, data):
+        data = json.loads(json)
+        users = []
+        for user in data:
+            users.append(json.loads(user))
+        return user
 
         
     def draw(self, screen):

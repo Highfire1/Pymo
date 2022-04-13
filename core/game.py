@@ -31,11 +31,10 @@ class Game:
 
         
         # begin the actual game
-        self.main_loop()
 
     
     
-    def main_loop(self):
+    async def mainLoop(self):
         while True:
             self.players.update()
 
@@ -44,6 +43,7 @@ class Game:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:  # When user clicks the 'x' on the window, close our game
+                    # TODO: close socket
                     pygame.quit()
                     sys.exit()
 
@@ -52,8 +52,8 @@ class Game:
             #    print("Adding Player")
 
 
-            
-            self.controller.update()
+            # USER CONTROL
+            await self.controller.update()
             self.controller.draw(self.screen)
 
             pygame.display.flip()

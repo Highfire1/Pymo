@@ -1,5 +1,6 @@
-import asyncio
+# Code from stackoverflow (god bless)
 
+import asyncio
 
 class EchoServerProtocol(asyncio.Protocol):
     def connection_made(self, transport):
@@ -14,8 +15,8 @@ class EchoServerProtocol(asyncio.Protocol):
         print('Send: {!r}'.format(message))
         self.transport.write(data)
 
-        print('Close the client socket')
-        #self.transport.close()
+        #print('Close the client socket')
+        self.transport.close()
 
 
 async def loadServer():
@@ -28,4 +29,5 @@ async def loadServer():
         'localhost', 8080)
 
     async with server:
+        print("Starting network of server...")
         await server.serve_forever()
