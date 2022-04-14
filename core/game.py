@@ -9,15 +9,16 @@ class Game:
         pygame.init()
 
         # Global constants
-        SCREEN_WIDTH = 1000
-        SCREEN_HEIGHT = 800
+        SCREEN_WIDTH = 500
+        SCREEN_HEIGHT = 400
         FRAME_RATE = 60
 
         # Creating the screen and the clock
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
         self.screen.set_alpha(0)  # Make alpha bits transparent
-        self.clock = pygame.time.Clock()
+        pygame.display.set_caption("Pymo!")
 
+        self.clock = pygame.time.Clock()
         self.players = pygame.sprite.Group()
 
 
@@ -38,24 +39,16 @@ class Game:
         while True:
             self.players.update()
 
-            #self.level.draw(self.screen)
-            self.players.draw(self.screen)
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:  # When user clicks the 'x' on the window, close our game
-                    # TODO: close socket
-                    pygame.quit()
-                    sys.exit()
-
-            #keys_pressed = pygame.key.get_pressed()
-            #if keys_pressed[pygame.K_x]:
-            #    print("Adding Player")
+            
+                
 
 
             # USER CONTROL
             await self.controller.update()
             self.controller.draw(self.screen)
 
+            # PYGAME THINGS
             pygame.display.flip()
             self.clock.tick(60)
             self.screen.fill((0,0,0))

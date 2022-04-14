@@ -1,8 +1,13 @@
 import json
+import random
+import hashlib
 
 class User:
-    def __init__(self, id=0, username="bob", data=""):
+    def __init__(self, id=0, username=None, data=""):
         self.id = id
+
+        if username == None:
+            username = str(random.randint(100000, 999999))
         self.username = username
         self.password = username 
 
@@ -19,15 +24,19 @@ class User:
         self.hp = 100
         self.damage = 1
         self.mana = 100
+
+        # 0 slot of inventory is CHATMESSAGE
+        # everything else tbd
+        self.equipment = []
+
+        for i in range(0, 5):
+            self.equipment.append(0)
         
-        self.equipment = {
-            0:1,
-            1:1,
-            2:10
-        }
+        self.equipment[1] = 1
+        self.equipment[2] = 1
+        self.equipment[3] = 10
 
         
-        self.needSync = True # set this to true whenever we modify ANYTHING about user
         self.lastJSON = self.toJSON()
         
 
@@ -46,18 +55,31 @@ class User:
     TODO: set out items and their effects
 
     '''
+
+    def addItem(self, id, add):
+        # TODO error/sanity checks
+        self.equipment[id] += add
     
     def toJSON(self):
-        attributes = [self.hp, self.mana, self.x, self.y]
         credentials = [self.id, self.password]
+        attributes = [self.hp, self.mana, self.x, self.y]
 
         data = json.dumps([credentials, attributes, self.equipment])
+
+        # remove message
+        #self.equipment[0] = ""
 
         return data
 
 
-    def fromJSON(self, json):
-        data = json.loads(json)
+    def fromJSON(self, payload):
+        try:
+            data = json.loads(payload)
+        except:
+            print("FAILED ON", payload)
+
+        self.id = data[0][0]
+        self.password = data[0][1]
 
         self.hp = data[1][0]
         self.mana = data[1][1]
@@ -65,3 +87,7 @@ class User:
         self.y = data[1][3]
 
         self.equipment = data[1]
+    
+    def hash(self):
+        # very secure i know shush
+        return self.password

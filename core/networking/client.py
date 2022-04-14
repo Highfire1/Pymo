@@ -9,9 +9,11 @@ async def sendToServer(data):
     data = data.encode('utf-8')
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(3)
         s.connect((HOST, PORT))
         s.sendall(data)
-        data = s.recv(1024)
+        data = s.recv(16384)
 
 
-    print('Received', repr(data))
+    return repr(data.decode('utf-8'))
+    
