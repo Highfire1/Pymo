@@ -27,12 +27,16 @@ class User:
 
         # 0 slot of inventory is CHATMESSAGE
         # everything else tbd
+        '''
+        slot 0: chat
+        slot 1: skin (1 - 5)
+        '''
         self.equipment = []
 
         for i in range(0, 5):
             self.equipment.append(0)
         
-        self.equipment[1] = 1
+        self.equipment[1] = random.randint(1, 5)
         self.equipment[2] = 1
         self.equipment[3] = 10
 
@@ -86,7 +90,7 @@ class User:
         self.x = data[1][2]
         self.y = data[1][3]
 
-        self.equipment = data[1]
+        self.equipment = data[2]
     
     def hash(self):
         # very secure i know shush

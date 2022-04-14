@@ -50,7 +50,7 @@ class Game:
 
             # PYGAME THINGS
             pygame.display.flip()
-            self.clock.tick(60)
+            self.clock.tick(15)
             self.screen.fill((0,0,0))
 
             

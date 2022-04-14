@@ -1,15 +1,17 @@
 import pygame
 import os
+import random
 from math import copysign
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, user, x = 200, y = 200, width = 30, height = 30, color = None):
+    def __init__(self, user, skin, x = 200, y = 200, width = 30, height = 30, color = None):
         super().__init__() 
 
         # pygame things
         # image is what the sprite looks like   
         # rect is where image is drawn
-        image_location = os.path.join("assets", "player.png")
+        
+        image_location = os.path.join("assets", f"player{skin}.png")
         self.image = pygame.image.load(image_location)
         self.image = pygame.transform.scale(self.image, (50, 50))
 

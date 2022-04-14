@@ -26,9 +26,9 @@ class EchoServerProtocol(asyncio.Protocol):
         #print('Send: {!r}'.format(message))
         if not self.queueSend.empty():
             self.transport.write(self.queueSend.queue[0].encode('utf-8'))
-            print("sending world state!")
-        else:
-            self.transport.write("Hello World")
+            #print("sending world state!")
+        #else:
+            #self.transport.write("Hello World")
 
         #print('Close the client socket')
         self.transport.close()

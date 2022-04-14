@@ -121,7 +121,7 @@ class Server:
             if not queueReceive.empty():
                 data = queueReceive.get()
                 user = self.updatePlayer(data)
-                print("new data recieved from", user.username)
+                #print("new data recieved from", user.username)
             
             # TODO: send the updates to clients
 

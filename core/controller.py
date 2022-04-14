@@ -17,7 +17,7 @@ class Controller():
     def __init__(self, user: User, level):
 
         self.user = user
-        self.sprite = Player(user)  
+        self.sprite = Player(user, user.equipment[1])  
         self.level = level
 
         if self.user.x == 0 and self.user.y == 0:
@@ -143,6 +143,7 @@ class Controller():
     def draw(self, screen):
         camx = int(self.user.camerax)
         camy = int(self.user.cameray)
+        w, h = pygame.display.get_surface().get_size()
 
         x = 0 - camx
         y = 0 - camy
@@ -154,16 +155,20 @@ class Controller():
 
         for user in self.users:
             if not user.hash() == self.user.hash():
-                x = 0 - camx + user.x
-                y = 0 - camy + user.y
+                x = user.x - camx + w/2
+                y = user.y - camy + h/2
 
-                pl = Player(user)  # create sprite
+                print(user.equipment)
+
+                pl = Player(user, user.equipment[1])  # create sprite
 
                 pl.draw(screen, x, y)
+                print(x, y)
+        
         
 
         # draw the controller
-        w, h = pygame.display.get_surface().get_size()
+        
 
         x = self.user.x - camx + w/2
         y = self.user.y - camy + h/2
