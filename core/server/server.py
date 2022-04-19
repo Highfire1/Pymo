@@ -133,7 +133,13 @@ class Server:
 
 
 
+
+
             self.players.update()
+
+
+
+
 
             #self.level.draw(self.screen)
             self.players.draw(self.screen)
@@ -166,6 +172,10 @@ class Server:
             #    if user.needSync:
             #        await self.writeUserData(user)
             #        user.needSync = False
+
+            # delete chat messages
+            #for user in self.users:
+            #    user.equipment[0] = ""
 
 
 

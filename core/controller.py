@@ -6,6 +6,7 @@ import sys
 from math import copysign
 from meta.user import User
 from core.sprites.player import Player
+from core.sprites.chat import chatBox
 from core.networking.client import sendToServer
 
 '''
@@ -28,11 +29,9 @@ class Controller():
         self.server = False
         self.serverThread = None
 
-        self.connections = 0
-        self.typing = False
-        self.chatBuffer = ""
+        self.chatBox = chatBox()
 
-        self.chatboxfont = pygame.font.SysFont('Comic Sans MS', 30)
+        self.connections = 0
 
         self.users = []
 
@@ -62,18 +61,18 @@ class Controller():
             
             # handle chat 
             if event.key == pygame.K_RETURN:
-                if self.typing:
-                    self.user.equipment[0] = self.chatBuffer
-                    self.chatBuffer = ""
+                if self.chatBox.typing:
+                    self.user.equipment[0] = self.chatBox.chatBuffer
+                    self.chatBox.chatBuffer = ""
                     self.user.needSync = True
 
-                self.typing = not self.typing
+                self.chatBox.typing = not self.chatBox.typing
 
-            elif self.typing:
+            elif self.chatBox.typing:
                 if event.key == pygame.K_BACKSPACE:
-                    self.chatBuffer = self.chatBuffer[:-1]
+                    self.chatBox.chatBuffer = self.chatBox.chatBuffer[:-1]
                 else:
-                    self.chatBuffer += event.unicode
+                    self.chatBox.chatBuffer += event.unicode
 
                         
         
@@ -83,7 +82,7 @@ class Controller():
         
         keys_pressed = pygame.key.get_pressed()
 
-        if not self.typing:
+        if not self.chatBox.typing:
             modifierx = 0
             modifiery = 0  
 
@@ -138,6 +137,7 @@ class Controller():
             u = User()
             u.fromJSON(user)
             users.append(u)
+            self.chatBox.parse(u)
         return users
         
     def draw(self, screen):
@@ -163,7 +163,7 @@ class Controller():
                 pl = Player(user, user.equipment[1])  # create sprite
 
                 pl.draw(screen, x, y)
-                print(x, y)
+                #print(x, y)
         
         
 
@@ -181,9 +181,10 @@ class Controller():
         # draw hud
         # chatbox
         # TODO: gray box like in minecraft
-        if self.typing:
-            chatbox = self.chatboxfont.render(self.chatBuffer, False, (255, 255, 255))
-            screen.blit(chatbox, (0,h - 60))
+        #if self.chatBox.typing:
+        self.chatBox.draw(screen)
+            #chatbox = self.chatboxfont.render(self.chatBuffer, False, (255, 255, 255))
+            #screen.blit(chatbox, (0,h - 60))
 
 
         
