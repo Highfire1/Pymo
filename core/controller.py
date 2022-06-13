@@ -26,7 +26,7 @@ class Controller():
             self.user.x = x
             self.user.y = y
         
-        self.server = False
+        self.server = False 
         self.serverThread = None
 
         self.chatBox = chatBox()
